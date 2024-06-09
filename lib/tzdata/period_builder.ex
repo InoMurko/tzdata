@@ -54,13 +54,17 @@ defmodule Tzdata.PeriodBuilder do
     if zone_has_until_limit do
       # If zone has an until - use that max year.
       {{{max_year_to_use, _, _}, _}, _} = Map.get(zone_line_hd, :until)
+      years_to_use = from_standard_time_year..max_year_to_use |> Enum.to_list
+      # get rules
+      {rules_type, rules_value} = zone_hd_rules
+      calc_rule_periods_h(rules_type, rules_value, [zone_line_hd|zone_line_tl], from, utc_off, std_off, years_to_use, letter)
     else
       max_year_to_use = @max_year
+      years_to_use = from_standard_time_year..max_year_to_use |> Enum.to_list
+      # get rules
+      {rules_type, rules_value} = zone_hd_rules
+      calc_rule_periods_h(rules_type, rules_value, [zone_line_hd|zone_line_tl], from, utc_off, std_off, years_to_use, letter)
     end
-    years_to_use = from_standard_time_year..max_year_to_use |> Enum.to_list
-    # get rules
-    {rules_type, rules_value} = zone_hd_rules
-    calc_rule_periods_h(rules_type, rules_value, [zone_line_hd|zone_line_tl], from, utc_off, std_off, years_to_use, letter)
   end
 
   # Helper function for function calc_periods with no rules
