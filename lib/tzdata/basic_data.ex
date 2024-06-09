@@ -19,9 +19,9 @@ defmodule Tzdata.BasicData do
   def rules(_), do: {:error, :not_found}
 
   # Provide lists of zone- and link-names
-  def zone_list, do: unquote(Macro.escape(Organizer.zone_list(all_files_flattened)))
-  def link_list, do: unquote(Macro.escape(Organizer.link_list(all_files_flattened)))
-  def zone_and_link_list, do: unquote(Macro.escape(Organizer.zone_and_link_list(all_files_flattened)))
+  def zone_list(), do: unquote(Macro.escape(Organizer.zone_list(all_files_flattened)))
+  def link_list(), do: unquote(Macro.escape(Organizer.link_list(all_files_flattened)))
+  def zone_and_link_list(), do: unquote(Macro.escape(Organizer.zone_and_link_list(all_files_flattened)))
 
   # Provide map of links
   def links, do: unquote(Macro.escape(links))

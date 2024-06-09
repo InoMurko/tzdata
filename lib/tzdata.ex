@@ -57,7 +57,7 @@ defmodule Tzdata do
       iex> Tzdata.zone_exists? "Europe/Jersey"
       true
   """
-  def zone_exists?(name), do: Enum.member?(zone_list, name)
+  def zone_exists?(name), do: Enum.member?(zone_list(), name)
 
   @doc """
   Takes the name of a zone. Returns true if zone exists and is canonical.
@@ -68,7 +68,7 @@ defmodule Tzdata do
       iex> Tzdata.canonical_zone? "Europe/Jersey"
       false
   """
-  def canonical_zone?(name), do: Enum.member?(canonical_zone_list, name)
+  def canonical_zone?(name), do: Enum.member?(canonical_zone_list(), name)
 
   @doc """
   Takes the name of a zone. Returns true if zone exists and is an alias.
