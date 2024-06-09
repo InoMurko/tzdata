@@ -49,26 +49,38 @@ defmodule Tzdata.PeriodBuilder do
     if zone_has_until_limit do
       if from == :min do
       from_standard_time_year = @min_year
-      else
-        {{from_standard_time_year,_,_},{_,_,_}} = :calendar.gregorian_seconds_to_datetime from_standard_time
-      end
       # If zone has an until - use that max year.
       {{{max_year_to_use, _, _}, _}, _} = Map.get(zone_line_hd, :until)
       years_to_use = from_standard_time_year..max_year_to_use |> Enum.to_list
       # get rules
       {rules_type, rules_value} = zone_hd_rules
       calc_rule_periods_h(rules_type, rules_value, [zone_line_hd|zone_line_tl], from, utc_off, std_off, years_to_use, letter)
+      else
+        {{from_standard_time_year,_,_},{_,_,_}} = :calendar.gregorian_seconds_to_datetime from_standard_time
+          # If zone has an until - use that max year.
+        {{{max_year_to_use, _, _}, _}, _} = Map.get(zone_line_hd, :until)
+        years_to_use = from_standard_time_year..max_year_to_use |> Enum.to_list
+        # get rules
+        {rules_type, rules_value} = zone_hd_rules
+        calc_rule_periods_h(rules_type, rules_value, [zone_line_hd|zone_line_tl], from, utc_off, std_off, years_to_use, letter)
+      end
     else
       if from == :min do
       from_standard_time_year = @min_year
-      else
-        {{from_standard_time_year,_,_},{_,_,_}} = :calendar.gregorian_seconds_to_datetime from_standard_time
-      end
       max_year_to_use = @max_year
       years_to_use = from_standard_time_year..max_year_to_use |> Enum.to_list
       # get rules
       {rules_type, rules_value} = zone_hd_rules
       calc_rule_periods_h(rules_type, rules_value, [zone_line_hd|zone_line_tl], from, utc_off, std_off, years_to_use, letter)
+      else
+        {{from_standard_time_year,_,_},{_,_,_}} = :calendar.gregorian_seconds_to_datetime from_standard_time
+        max_year_to_use = @max_year
+        years_to_use = from_standard_time_year..max_year_to_use |> Enum.to_list
+        # get rules
+        {rules_type, rules_value} = zone_hd_rules
+        calc_rule_periods_h(rules_type, rules_value, [zone_line_hd|zone_line_tl], from, utc_off, std_off, years_to_use, letter)
+      end
+
     end
   end
 
