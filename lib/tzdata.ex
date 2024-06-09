@@ -45,7 +45,7 @@ defmodule Tzdata do
   A list of aliases for zone names. For instance Europe/Jersey
   is an alias for Europe/London. Aliases are also known as linked zones.
   """
-  def zone_alias_list, do: unquote(Macro.escape(TzData.link_list))
+  def zone_alias_list(), do: unquote(Macro.escape(TzData.link_list))
 
   @doc """
   Takes the name of a zone. Returns true zone exists. Otherwise false.
@@ -79,7 +79,7 @@ defmodule Tzdata do
       iex> Tzdata.zone_alias? "Europe/London"
       false
   """
-  def zone_alias?(name), do: Enum.member?(zone_alias_list, name)
+  def zone_alias?(name), do: Enum.member?(zone_alias_list(), name)
 
   # Provide map of links
   @doc """
