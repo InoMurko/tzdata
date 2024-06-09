@@ -49,31 +49,53 @@ defmodule Tzdata.FarFutureDynamicPeriods do
 
     if length(prev_periods) >= rules_per_year do
       until_time_year = year + 1
+      from_standard_time = standard_time_from_utc(from, utc_off)
+      from_wall_time = wall_time_from_utc(from, utc_off, std_off)
+      until_utc = datetime_to_utc(Util.time_for_rule(end_rule, until_time_year), utc_off, std_off)
+      until_standard_time = standard_time_from_utc(until_utc, utc_off)
+      until_wall_time = wall_time_from_utc(until_utc, utc_off, std_off)
+
+      period = %{
+        std_off: std_off,
+        utc_off: utc_off,
+        from: %{utc: from, wall: from_wall_time, standard: from_standard_time},
+        until: %{standard: until_standard_time, wall: until_wall_time, utc: until_utc},
+        zone_abbr: Util.period_abbrevation(zone_line.format, std_off, begin_rule.letter)
+      }
+
+      {{until_year_wall, _, _}, _} = :calendar.gregorian_seconds_to_datetime(until_wall_time)
+
+      if length(prev_periods) == rules_per_year do
+        prev_periods ++ [period]
+      else
+        periods_until_year(prev_periods ++ [period], until_utc, utc_off, zone_line, rules |> tl, until_year_wall, rules_per_year)
+      end
     else
       until_time_year = year
+      from_standard_time = standard_time_from_utc(from, utc_off)
+      from_wall_time = wall_time_from_utc(from, utc_off, std_off)
+      until_utc = datetime_to_utc(Util.time_for_rule(end_rule, until_time_year), utc_off, std_off)
+      until_standard_time = standard_time_from_utc(until_utc, utc_off)
+      until_wall_time = wall_time_from_utc(until_utc, utc_off, std_off)
+
+      period = %{
+        std_off: std_off,
+        utc_off: utc_off,
+        from: %{utc: from, wall: from_wall_time, standard: from_standard_time},
+        until: %{standard: until_standard_time, wall: until_wall_time, utc: until_utc},
+        zone_abbr: Util.period_abbrevation(zone_line.format, std_off, begin_rule.letter)
+      }
+
+      {{until_year_wall, _, _}, _} = :calendar.gregorian_seconds_to_datetime(until_wall_time)
+
+      if length(prev_periods) == rules_per_year do
+        prev_periods ++ [period]
+      else
+        periods_until_year(prev_periods ++ [period], until_utc, utc_off, zone_line, rules |> tl, until_year_wall, rules_per_year)
+      end
     end
 
-    from_standard_time = standard_time_from_utc(from, utc_off)
-    from_wall_time = wall_time_from_utc(from, utc_off, std_off)
-    until_utc = datetime_to_utc(Util.time_for_rule(end_rule, until_time_year), utc_off, std_off)
-    until_standard_time = standard_time_from_utc(until_utc, utc_off)
-    until_wall_time = wall_time_from_utc(until_utc, utc_off, std_off)
 
-    period = %{
-      std_off: std_off,
-      utc_off: utc_off,
-      from: %{utc: from, wall: from_wall_time, standard: from_standard_time},
-      until: %{standard: until_standard_time, wall: until_wall_time, utc: until_utc},
-      zone_abbr: Util.period_abbrevation(zone_line.format, std_off, begin_rule.letter)
-    }
-
-    {{until_year_wall, _, _}, _} = :calendar.gregorian_seconds_to_datetime(until_wall_time)
-
-    if length(prev_periods) == rules_per_year do
-       prev_periods ++ [period]
-    else
-       periods_until_year(prev_periods ++ [period], until_utc, utc_off, zone_line, rules |> tl, until_year_wall, rules_per_year)
-    end
   end
 
   defp first_period_that_ends_in_year(zone_name, year) do
